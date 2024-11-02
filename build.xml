@@ -5,6 +5,7 @@
     <property name="test.dir" value="tests"/>
     <property name="build.dir" value="build"/>
     <property name="lib.dir" value="lib"/>
+    <property name="jar.name" value="NotebookApp.jar"/>
 
     <!-- Задача для очищення каталогу збірки -->
     <target name="clean">
@@ -23,8 +24,13 @@
         </javac>
     </target>
 
+    <!-- Задача для створення JAR-файлу -->
+    <target name="jar" depends="compile">
+        <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}"/>
+    </target>
+
     <!-- Задача для запуску тестів -->
-    <target name="run-tests" depends="compile">
+    <target name="run-tests" depends="jar">
         <mkdir dir="${build.dir}/test-results"/>
         <java classname="unittest" fork="true">
             <classpath>
@@ -33,7 +39,7 @@
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="tests/TestNotebook.py"/> <!-- Вкажіть шлях до вашого файлу з тестами -->
+            <arg value="${test.dir}/TestNotebook.py"/> <!-- Вкажіть шлях до вашого файлу з тестами -->
             <jvmarg value="-Dtest.output.dir=${build.dir}/test-results"/>
         </java>
     </target>
