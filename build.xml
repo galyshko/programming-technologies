@@ -1,52 +1,19 @@
-<project name="NotebookApp" default="run-tests" basedir=".">
-
-    <!-- Визначення властивостей -->
-    <property name="src.dir" value="src"/>
+<project name="NotebookProject" default="run-tests" basedir=".">
+    <property name="src.dir" value="."/>
     <property name="test.dir" value="tests"/>
-    <property name="build.dir" value="build"/>
-    <property name="lib.dir" value=".venv/Lib"/>
-    <property name="jar.name" value="NotebookApp.jar"/>
+    <property name="venv.dir" value=".venv"/>
 
-    <!-- Задача для очищення каталогу збірки -->
-    <target name="clean">
-        <delete dir="${build.dir}"/>
-        <mkdir dir="${build.dir}"/>
+    <target name="init">
+        <mkdir dir="${test.dir}/result"/>
     </target>
 
-    <!-- Задача для компіляції коду -->
-    <target name="compile" depends="clean">
-        <javac srcdir="${src.dir}" destdir="${build.dir}">
-            <classpath>
-                <fileset dir="${lib.dir}">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-        </javac>
+    <target name="run-tests" depends="init">
+        <exec executable="${venv.dir}/Scripts/python.exe">
+            <arg value="-m"/>
+            <arg value="unittest"/>
+            <arg value="discover"/>
+            <arg value="-s"/>
+            <arg value="${test.dir}"/>
+        </exec>
     </target>
-
-    <!-- Задача для створення JAR-файлу -->
-    <target name="jar" depends="compile">
-        <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}"/>
-    </target>
-
-    <!-- Задача для запуску тестів -->
-    <target name="test" depends="jar">
-        <mkdir dir="${build.dir}/test-results"/>
-        <java classname="unittest" fork="true">
-            <classpath>
-                <pathelement location="${build.dir}"/>
-                <fileset dir="${lib.dir}">
-                    <include name="*.jar"/>
-                </fileset>
-            </classpath>
-            <arg value="${test.dir}/test_notebook.py"/> <!-- Вкажіть правильний шлях до вашого файлу з тестами -->
-            <jvmarg value="-Dtest.output.dir=${build.dir}/test-results"/>
-        </java>
-    </target>
-
-    <!-- Задача для запуску всіх тестів -->
-    <target name="run-tests" depends="test">
-        <echo message="All tests have been executed."/>
-    </target>
-
 </project>
