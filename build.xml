@@ -30,7 +30,7 @@
     </target>
 
     <!-- Задача для запуску тестів -->
-    <target name="run-tests" depends="jar">
+    <target name="test" depends="jar">
         <mkdir dir="${build.dir}/test-results"/>
         <java classname="unittest" fork="true">
             <classpath>
@@ -39,9 +39,14 @@
                     <include name="*.jar"/>
                 </fileset>
             </classpath>
-            <arg value="${test.dir}/TestNotebook.py"/> <!-- Вкажіть шлях до вашого файлу з тестами -->
+            <arg value="${test.dir}/test_notebook.py"/> <!-- Вкажіть правильний шлях до вашого файлу з тестами -->
             <jvmarg value="-Dtest.output.dir=${build.dir}/test-results"/>
         </java>
+    </target>
+
+    <!-- Задача для запуску всіх тестів -->
+    <target name="run-tests" depends="test">
+        <echo message="All tests have been executed."/>
     </target>
 
 </project>
