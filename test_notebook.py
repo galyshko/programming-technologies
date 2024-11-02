@@ -1,6 +1,7 @@
 import unittest
 from notebook import Notebook
 import queue
+from xmlrunner import XMLTestRunner
 
 class TestNotebook(unittest.TestCase):
 
@@ -61,4 +62,6 @@ class TestNotebook(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    # Запуск тестів із записом результатів у XML-файл
+    with open("build/test/result/TEST-results.xml", "wb") as output:
+        unittest.main(testRunner=XMLTestRunner(output=output))
