@@ -4,7 +4,7 @@
     <property name="src.dir" value="src"/>
     <property name="test.dir" value="tests"/>
     <property name="build.dir" value="build"/>
-    <property name="lib.dir" value="lib"/>
+    <property name="lib.dir" value=".venv/Lib"/>
     <property name="jar.name" value="NotebookApp.jar"/>
 
     <!-- Задача для очищення каталогу збірки -->
