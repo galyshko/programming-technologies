@@ -7,8 +7,8 @@ class Notebook:
 
     def add_note(self, note):
         #Додає нову нотатку до черги
-        #if not note:  # Перевірка на пусту нотатку
-            #raise ValueError("Нотатка не може бути пустою")
+        if not note:  # Перевірка на пусту нотатку
+            raise ValueError("Нотатка не може бути пустою")
         self.notes_queue.put(note)
         print(f"Нотатка додана: {note}")
 
