@@ -22,8 +22,7 @@ pipeline {
             steps {
                 script {
                     // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
-                    sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
-
+                    sh "echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin"
                 }
             }
         }
@@ -51,15 +50,6 @@ pipeline {
                     echo "Tests failed"
                 }
             }
-            stage('Docker Login') {
-            agent any
-            steps {
-                script {
-                    // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
-                    sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
-                }
-            }
-        }
         }
     }
 }
