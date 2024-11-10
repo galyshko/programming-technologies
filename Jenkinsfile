@@ -1,62 +1,68 @@
 pipeline {
     options { timestamps() }
+
     agent none
-    environment {
-        DOCKER_CREDI = credentials('docker') // Ім'я "docker" має співпадати з існуючим налаштуванням
+    triggers {
+        cron('H 0 * * *')
+        pollSCM('H 20 * * * ')
     }
     stages {
-        stage ('Check scm') {
+        stage('Check scm') {
             agent any
             steps {
                 checkout scm
             }
         }
-        stage ('Build') {
+        stage('Build') {
             steps {
-                echo "Building ... ${BUILD_NUMBER}"
+                echo "Building...${BUILD_NUMBER}"
                 echo "Build completed"
             }
         }
-        stage ('Test') {
+        stage('Create Docker Image') {
+            agent any
+            steps {
+                script {
+                    def imageName = "sergoo/lab4-jenkins:${BUILD_NUMBER}"
+                    sh "docker build -t ${imageName} ."
+                    env.IMAGE_NAME = imageName
+                }
+            }
+        }
+        stage('Upload to Docker Hub') {
+            agent any
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    }
+                    sh "docker push ${env.IMAGE_NAME}"
+                }
+            }
+        }
+        stage('Test') {
             agent {
                 docker {
-                    image 'python:3.12-alpine'
+                    image 'python:3.12'
                     args '-u root'
                 }
             }
             steps {
-                script {
-                    // Встановлення Python і pip, створення віртуального середовища
-                    sh '''
-                        apk add --no-cache python3 py3-pip && \
-                        python3 -m venv /venv && \
-                        /venv/bin/pip install unittest-xml-reporting
-                    '''
-                    // Запуск тестів
-                    sh '/venv/bin/python3 Testing.py'
-                }
+                sh 'pip install --upgrade pip'
+                sh 'pip install --no-cache-dir virtualenv'
+                sh 'virtualenv venv'
+                sh 'venv/bin/pip install --no-cache-dir pytest pytest-cov'
+                sh 'venv/bin/python app_test.py'
             }
             post {
                 always {
-                    junit 'test-reports/*.xml'
+                    echo "Test stage completed"
                 }
                 success {
-                    echo "Testing successful"
+                    echo "Application testing successfully completed"
                 }
                 failure {
-                    echo "Tests failed"
-                }
-            }
-        }
-        stage ('Publishing to Docker') {
-            agent any
-            steps {
-                sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
-                sh 'docker build -t sergoo/lab4-jenkins --push .'
-            }
-            post {
-                always {
-                    sh 'docker logout'
+                    echo "Oooppss!!! Tests failed!"
                 }
             }
         }
