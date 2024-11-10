@@ -1,6 +1,9 @@
 pipeline {
     options { timestamps() }
     agent none
+    environment {
+        DOCKER = credentials('docker') // Ім'я "docker" має співпадати з існуючим налаштуванням
+    }
     stages {
         stage('Check scm') {
             agent any
@@ -19,7 +22,7 @@ pipeline {
             steps {
                 script {
                     // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
-                    sh "echo ${Serhiy0912.} | docker login -u ${sergoo} --password-stdin"
+                    sh "echo ${DOCKER_PASSWORD} | docker login -u ${DOCKER_USERNAME} --password-stdin"
                 }
             }
         }
