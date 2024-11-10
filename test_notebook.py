@@ -38,7 +38,7 @@ class TestNotebook(unittest.TestCase):
             self.notebook.process_note()
 
     # Тест на негативний сценарій
-    @unittest.expectedFailure
+    #@unittest.expectedFailure
     def test_add_empty_note(self):
         #Тестуємо додавання пустої нотатки.
         with self.assertRaises(ValueError):
