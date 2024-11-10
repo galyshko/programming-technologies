@@ -1,5 +1,5 @@
 import unittest
-from notebook import Notebook
+import os
 import queue
 
 class TestNotebook(unittest.TestCase):
@@ -61,4 +61,11 @@ class TestNotebook(unittest.TestCase):
 
 
 if __name__ == "__main__":
-        unittest.main()
+    # Перевірка наявності каталогу для результатів і його створення
+    if not os.path.exists('test-reports'):
+        os.makedirs('test-reports')
+
+    # Запуск тестів через XMLTestRunner без виклику unittest.main()
+    with open('test-reports/test_results.xml', 'wb') as output:
+        runner = xmlrunner.XMLTestRunner(output=output)
+        unittest.main(testRunner=runner, exit=False)
