@@ -1,9 +1,6 @@
 pipeline {
     options { timestamps() }
     agent none
-    environment {
-        DOCKERHUB_CREDENTIALS = credentials('docker') // Ім'я "docker" має співпадати з існуючим налаштуванням
-    }
     stages {
         stage('Check scm') {
             agent any
@@ -15,6 +12,15 @@ pipeline {
             steps {
                 echo "Building ... ${BUILD_NUMBER}"
                 echo "Build completed"
+            }
+        }
+        stage('Docker Login') {
+            agent any
+            steps {
+                script {
+                    // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
+                    sh "echo ${Serhiy0912.} | docker login -u ${sergoo} --password-stdin"
+                }
             }
         }
         stage('Test') {
@@ -42,19 +48,5 @@ pipeline {
                 }
             }
         }
-        stage('Login to Docker Hub') {
-    steps{
-    withCredentials([string(credentialsId: 'docker_id', variable: 'dockerhub')]) {
-}
-	sh 'echo  docker login -u devopsint -p $(docker_id)'
-	echo 'Login Completed'
-    }
-}
-stage('Push Image to Docker Hub') {
-    steps{
- sh 'sudo docker push sergoo/lab4-jenkins:$BUILD_NUMBER'
-echo 'Push Image Completed'
-    }
-}
     }
 }
