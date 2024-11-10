@@ -1,10 +1,11 @@
 pipeline {
-    options {
-        timestamps()
-    }
+    options { timestamps() }
     agent none
+    environment {
+        DOCKER_TLS_CERTDIR = ''
+    }
     stages {
-        stage('Check SCM') {
+        stage('Check scm') {
             agent any
             steps {
                 checkout scm
@@ -20,17 +21,18 @@ pipeline {
             agent {
                 docker {
                     image 'alpine'
-                    args '-u "root"'
+                    args '--rm -u="root"'
                 }
             }
             steps {
+                sh 'apk update && apk add python3 py3-pip'
                 sh 'pip install --upgrade pip'
                 sh 'pip install xmlrunner'
-                sh 'python test_notebook.py'
+                sh 'python3 test_notebook.py'
             }
             post {
                 always {
-                    junit "test-reports/*.xml"
+                    junit 'test-reports/*.xml'
                 }
                 success {
                     echo "Success"
