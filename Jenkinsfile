@@ -29,10 +29,8 @@ pipeline {
             }
             steps {
                 sh 'pip install --upgrade pip'
-                sh 'pip install --no-cache-dir virtualenv'
-                sh 'virtualenv venv'
-                sh 'venv/bin/pip install --no-cache-dir pytest pytest-cov'
-                sh 'venv/bin/python app_test.py'
+                sh 'pip install --no-cache-dir pytest pytest-cov'
+                sh 'pytest test_notebook.py'
             }
             post {
                 always {
