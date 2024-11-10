@@ -1,7 +1,9 @@
 pipeline {
     options { timestamps() }
     agent none
-
+    environment {
+        DOCKERHUB_CREDENTIALS = credentials('docker') // Ім'я "docker" має співпадати з існуючим налаштуванням
+    }
     stages {
         stage('Check scm') {
             agent any
@@ -40,5 +42,17 @@ pipeline {
                 }
             }
         }
+        stage('Login to Docker Hub') {
+    steps{
+	sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+	echo 'Login Completed'
+    }
+}
+stage('Push Image to Docker Hub') {
+    steps{
+ sh 'sudo docker push sergoo/lab4-jenkins:$BUILD_NUMBER'
+echo 'Push Image Completed'
+    }
+}
     }
 }
