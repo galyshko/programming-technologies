@@ -1,9 +1,10 @@
 pipeline {
     options { timestamps() }
+
     agent none
-    environment {
-        DOCKER_HOST = 'unix:///var/run/docker.sock'  // Зміна Docker endpoint
-        DOCKER_TLS_CERTDIR = ''                      // Вимикає потребу в сертифікатах
+    triggers {
+        cron('H 0 * * *')
+        pollSCM('H 20 * * * ')
     }
     stages {
         stage('Check scm') {
@@ -14,32 +15,54 @@ pipeline {
         }
         stage('Build') {
             steps {
-                echo "Building ${BUILD_NUMBER}"
-                echo "Build complete"
+                echo "Building...${BUILD_NUMBER}"
+                echo "Build completed"
+            }
+        }
+        stage('Create Docker Image') {
+            agent any
+            steps {
+                script {
+                    def imageName = "galyshko/lab4-jenkins:${BUILD_NUMBER}"
+                    sh "docker build -t ${imageName} ."
+                    env.IMAGE_NAME = imageName
+                }
+            }
+        }
+        stage('Upload to Docker Hub') {
+            agent any
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                    }
+                    sh "docker push ${env.IMAGE_NAME}"
+                }
             }
         }
         stage('Test') {
             agent {
                 docker {
-                    image 'alpine'
-                    args '--rm -u="root"'
+                    image 'python:3.12'
+                    args '-u root'
                 }
             }
             steps {
-                sh 'apk update && apk add python3 py3-pip'
                 sh 'pip install --upgrade pip'
-                sh 'pip install xmlrunner'
-                sh 'python3 test_notebook.py'
+                sh 'pip install --no-cache-dir virtualenv'
+                sh 'virtualenv venv'
+                sh 'venv/bin/pip install --no-cache-dir pytest pytest-cov'
+                sh 'venv/bin/python app_test.py'
             }
             post {
                 always {
-                    junit 'test-reports/*.xml'
+                    echo "Test stage completed"
                 }
                 success {
-                    echo "Success"
+                    echo "Application testing successfully completed"
                 }
                 failure {
-                    echo "Failure"
+                    echo "Oooppss!!! Tests failed!"
                 }
             }
         }
