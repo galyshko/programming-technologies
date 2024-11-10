@@ -12,7 +12,7 @@ class TestNotebook(unittest.TestCase):
         self.notebook = Notebook()
 
     def test_add_note(self):
-        #Тестуємо додавання нотатки в чергу
+        """Тестуємо додавання нотатки в чергу"""
         self.notebook.add_note("Купити хліб")
         self.assertEqual(self.notebook.notes_queue.qsize(), 1)
         self.notebook.add_note("Зателефонувати другу")
