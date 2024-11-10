@@ -2,6 +2,9 @@ import unittest
 import os
 import queue
 
+from main import Notebook
+
+
 class TestNotebook(unittest.TestCase):
 
     def setUp(self):
