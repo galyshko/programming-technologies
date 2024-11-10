@@ -44,7 +44,9 @@ pipeline {
         }
         stage('Login to Docker Hub') {
     steps{
-	sh 'echo $DOCKERHUB_CREDENTIALS_PSW | sudo docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+    withCredentials([string(credentialsId: 'docker_id', variable: 'dockerhub')]) {
+}
+	sh 'echo  docker login -u devopsint -p $(docker_id)'
 	echo 'Login Completed'
     }
 }
