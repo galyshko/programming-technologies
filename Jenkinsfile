@@ -2,7 +2,8 @@ pipeline {
     options { timestamps() }
     agent none
     environment {
-        DOCKER = credentials('docker') // Ім'я "docker" має співпадати з існуючим налаштуванням
+        DOCKER_USERNAME = 'sergoo'
+        DOCKER_PASSWORD = 'Serhiy0912.'
     }
     stages {
         stage('Check scm') {
