@@ -1,6 +1,9 @@
 pipeline {
     options { timestamps() }
     agent none
+    environment {
+        DOCKER_CREDI = credentials('docker')
+    }
     stages {
         stage('Check scm') {
             agent any
@@ -38,6 +41,18 @@ pipeline {
                     echo "Tests failed"
                 }
             }
+            stage ('Publishing to Docker') {
+            agent any
+            steps {
+                sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
+                sh 'docker build -t sergoo/lab4-jenkins --push .'
+            }
+            post {
+                always {
+                    sh 'docker logout'
+                }
+            }
+        }
         }
     }
 }
