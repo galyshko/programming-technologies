@@ -17,15 +17,7 @@ pipeline {
                 echo "Build completed"
             }
         }
-        stage('Docker Login') {
-            agent any
-            steps {
-                script {
-                    // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
-                    sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
-                }
-            }
-        }
+
         stage('Test') {
             agent {
                 docker {
@@ -50,6 +42,21 @@ pipeline {
                     echo "Tests failed"
                 }
             }
+            stage('Docker Login') {
+            agent any
+            steps {
+                script {
+                    // Замість значень 'your-username' та 'your-password' використовуйте секрети Jenkins або змінні середовища
+                    sh 'echo $DOCKER_CREDI_PSW | docker login --username $DOCKER_CREDI_USR --password-stdin'
+                    sh 'docker build -t sergoo/lab4-jenkins --push .'
+                }
+            }
+            post {
+                always {
+                    sh 'docker logout'
+                }
+            }
+        }
         }
     }
 }
