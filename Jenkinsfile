@@ -1,7 +1,7 @@
 pipeline {
     options { timestamps() }
 
-    agent none
+    agent any
     triggers {
         cron('H 0 * * *')
         pollSCM('H 20 * * * ')
@@ -21,12 +21,6 @@ pipeline {
         }
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'python:3.12'
-                    args '-u root'
-                }
-            }
             steps {
                 sh 'pip install --upgrade pip'
                 sh 'pip install --no-cache-dir pytest pytest-cov'
