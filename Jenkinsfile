@@ -19,27 +19,7 @@ pipeline {
                 echo "Build completed"
             }
         }
-        stage('Create Docker Image') {
-            agent any
-            steps {
-                script {
-                    def imageName = "sergoo/lab4-jenkins:${BUILD_NUMBER}"
-                    sh "docker build -t ${imageName} ."
-                    env.IMAGE_NAME = imageName
-                }
-            }
-        }
-        stage('Upload to Docker Hub') {
-            agent any
-            steps {
-                script {
-                    withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                        sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
-                    }
-                    sh "docker push ${env.IMAGE_NAME}"
-                }
-            }
-        }
+
         stage('Test') {
             agent {
                 docker {
