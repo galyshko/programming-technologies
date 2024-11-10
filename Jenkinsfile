@@ -25,7 +25,7 @@ pipeline {
                 sh 'apk add --update python3 py3-pip'
                 sh 'python3 -m venv /venv'
                 sh 'source /venv/bin/activate && pip install unittest-xml-reporting'
-                sh 'source /venv/bin/activate && python3 Tests.py'
+                sh 'source /venv/bin/activate && python3 test_notebook.py'
             }
             post {
                 always {
