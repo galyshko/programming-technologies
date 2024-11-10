@@ -23,7 +23,7 @@ pipeline {
             agent any
             steps {
                 script {
-                    def imageName = "galyshko/lab4-jenkins:${BUILD_NUMBER}"
+                    def imageName = "sergoo/lab4-jenkins:${BUILD_NUMBER}"
                     sh "docker build -t ${imageName} ."
                     env.IMAGE_NAME = imageName
                 }
