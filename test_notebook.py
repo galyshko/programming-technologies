@@ -71,4 +71,4 @@ if __name__ == "__main__":
     # Запуск тестів через XMLTestRunner без виклику unittest.main()
     with open('test-reports/test_results.xml', 'wb') as output:
         runner = xmlrunner.XMLTestRunner(output=output)
-        unittest.main(testRunner=runner, exit=True)
+        unittest.main(testRunner=runner)
