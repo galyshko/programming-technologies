@@ -2,7 +2,8 @@ pipeline {
     options { timestamps() }
     agent none
     environment {
-        DOCKER_TLS_CERTDIR = ''
+        DOCKER_HOST = 'unix:///var/run/docker.sock'  // Зміна Docker endpoint
+        DOCKER_TLS_CERTDIR = ''                      // Вимикає потребу в сертифікатах
     }
     stages {
         stage('Check scm') {
