@@ -51,7 +51,7 @@ resource "aws_security_group" "web_app" {
 }
 
 resource "aws_instance" "webapp_instance" {
-  ami           = "ami-0084a47cc718c111a"
+  ami           = "ami-08eb150f611ca277f"
   instance_type = "t3.micro"
   vpc_security_group_ids = [aws_security_group.web_app.id]
 
