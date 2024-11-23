@@ -68,7 +68,7 @@ if __name__ == "__main__":
     if not os.path.exists('test-reports'):
         os.makedirs('test-reports')
 
-    # Запуск тестів через XMLTestRunner без виклику unittest.main()
+    # Запуск тестів через XMLTestRunner
     with open('test-reports/test_results.xml', 'wb') as output:
         runner = xmlrunner.XMLTestRunner(output=output)
-        unittest.main(testRunner=runner)
+        unittest.main(testRunner=runner,exit=False)
