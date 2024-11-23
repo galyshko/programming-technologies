@@ -1,21 +1,20 @@
 terraform {
-  required_version = ">=0.13.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.0"
+      version = "~> 4.0"
     }
   }
+  required_version = ">= 1.0.0"
+}
 
-
-# Configure the AWS provider
 provider "aws" {
-  region = "eu-north-1a"
+  region = "us-east-1"
 }
 
 resource "aws_security_group" "web_app" {
-  name        = "web_app_unique"
-  description = "security group for web application"
+  name        = "web_app_sg"
+  description = "Allow HTTP and SSH"
 
   ingress {
     from_port   = 80
@@ -33,27 +32,23 @@ resource "aws_security_group" "web_app" {
 
   egress {
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = {
-    Name = "web_app"
   }
 }
 
 resource "aws_instance" "webapp_instance" {
-    ami           = "ami-06b21ccaeff8cd686"
+   ami           = "ami-06b21ccaeff8cd686"
   instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.web_app.id]
+
+  security_groups = [aws_security_group.web_app.name]
 
   tags = {
-    Name = "webapp_instance"
+    Name = "web_app_instance"
   }
 }
 
 output "instance_public_ip" {
-  value     = aws_instance.webapp_instance.public_ip
-  sensitive = true
+  value = aws_instance.webapp_instance.public_ip
 }
